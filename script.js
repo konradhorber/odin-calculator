@@ -11,19 +11,32 @@ let secondLastInputNumber;
 let lastOperator;
 const buttons = document.querySelectorAll(".button");
 const screen = document.querySelector(".calculator-screen")
+  
 buttons.forEach((button) => {
     button.addEventListener("click", () => {
-        lastClick = button.innerHTML;
+        lastClick = button.id;
         if(isNumeric(lastClick)) {
             lastInputNumber += lastClick;
             screen.innerHTML=lastInputNumber;
+        } else if(lastClick === "="){
+            lastInputNumber = Number(lastInputNumber);
+            lastInputNumber = operate(lastOperator, 
+                secondLastInputNumber, 
+                lastInputNumber);
+            screen.innerHTML = lastInputNumber;
+        } else if(lastClick === "C"){
+            lastInputNumber = "";
+            lastOperator = "";
+            secondLastInputNumber = "";
+            screen.innerHTML="_" 
         } else {
             lastOperator = lastClick;
             secondLastInputNumber = Number(lastInputNumber);
             lastInputNumber = "";
         }
-    })
-})
+    });
+});
+
 
 // function to check if number
 function isNumeric(str) {
@@ -34,7 +47,14 @@ function isNumeric(str) {
 
 // operator to feed button clicks to calculation operation functions
 function operate(operator, number1, number2) {
-    return operator(number1, number2);
+    // object that maps operator names to functions 
+    const operators = {
+        add,
+        subtract,
+        multiply,
+        divide
+    };
+    return operators[operator](number1, number2);
 }
 
 // calculator operation functions
